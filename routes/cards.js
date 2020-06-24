@@ -13,7 +13,7 @@ const cards = (cb) => {
   })
 };
 
-cardsRouter.get('/', (req, res) => {
+cardsRouter.get('/cards', (req, res) => {
   cards(data => res.send(data));
 });
 
