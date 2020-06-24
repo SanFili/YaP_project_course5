@@ -10,8 +10,12 @@ const cardsRouter = require('./routes/cards');
 app.use(express.static(path.join(__dirname, "public")));
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
-
 app.use('/', userId);
+app.use((req, res) => {
+  if (!res.headersSent) {
+    res.status(404).send({ "message": "Запрашиваемый ресурс не найден" })
+  }
+})
 
 app.listen(PORT)
 
