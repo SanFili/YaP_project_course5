@@ -1,4 +1,4 @@
-const cardsRouter = require("express").Router();
+const cardsRouter = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 
@@ -9,12 +9,12 @@ const cards = (cb) => {
       console.log(err);
       return;
     }
-    cb(JSON.parse(data))
-  })
+    cb(JSON.parse(data));
+  });
 };
 
 cardsRouter.get('/cards', (req, res) => {
-  cards(data => res.send(data));
+  cards((data) => res.send(data));
 });
 
 module.exports = cardsRouter;

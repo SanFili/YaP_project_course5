@@ -1,5 +1,5 @@
-const usersRouter = require("express").Router();
-const userId = require("express").Router();
+const usersRouter = require('express').Router();
+const userId = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 
@@ -10,37 +10,37 @@ const users = (cb) => {
       console.log(err);
       return;
     }
-    cb(JSON.parse(data))
-  })
+    cb(JSON.parse(data));
+  });
 };
 
 usersRouter.get('/users', (req, res) => {
-  users(data => res.send(data));
+  users((data) => res.send(data));
 });
 
 function transform(arr) {
-  arr.forEach(item => {
+  arr.forEach((item) => {
     item.id = item._id;
     delete item._id;
-  })
-  return arr
+  });
+  return arr;
 }
 
 userId.get('/users/:id', (req, res) => {
-  users(data => {
-    transform(data)
+  users((data) => {
+    transform(data);
     let er = 0;
-    data.forEach(item => {
-    if (item.id == req.params.id) {
-      res.send(item)
-      return er += 1;
+    data.forEach((item) => {
+      if (item.id === req.params.id) {
+        res.send(item);
+        er += 1;
+        return er;
+      }
+    });
+    if (er === 0) {
+      res.status(404).send({ message: 'Нет пользователя с таким id' });
     }
-    })
-    if (er == 0) {
-      res.status(404).send({ "message": "Нет пользователя с таким id" })
-    }
-  })
-})
+  });
+});
 
-
-module.exports = {usersRouter, userId};
+module.exports = { usersRouter, userId };
