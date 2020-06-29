@@ -1,46 +1,25 @@
 const usersRouter = require('express').Router();
-const userId = require('express').Router();
-const fs = require('fs');
 const path = require('path');
+const filepath = path.join(__dirname, '../data/users.json');
+const users = require(filepath);
 
-const users = (cb) => {
-  const filepath = path.join(__dirname, '../data/users.json');
-  fs.readFile(filepath, { encoding: 'utf8' }, (err, data) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    cb(JSON.parse(data));
-  });
-};
-
-usersRouter.get('/users', (req, res) => {
-  users((data) => res.send(data));
+usersRouter.get('/', (req, res, next) => {
+  res.send(users);
+  next();
 });
 
-function transform(arr) {
-  arr.forEach((item) => {
-    item.id = item._id;
-    delete item._id;
-  });
-  return arr;
-}
-
-userId.get('/users/:id', (req, res) => {
-  users((data) => {
-    transform(data);
-    let er = 0;
-    data.forEach((item) => {
-      if (item.id === req.params.id) {
-        res.send(item);
-        er += 1;
-        return er;
-      }
-    });
-    if (er === 0) {
-      res.status(404).send({ message: 'Нет пользователя с таким id' });
+usersRouter.get('/:id', (req, res, next) => {
+  let found = false;
+  users.forEach(el => {
+    if (el._id == req.params.id) {
+      res.send(el)
+      found = true;
     }
-  });
+  })
+  if (!found) {
+    res.status(404).send({ "message": "Нет пользователя с таким id" })
+  }
+  next();
 });
 
-module.exports = { usersRouter, userId };
+module.exports = usersRouter;
