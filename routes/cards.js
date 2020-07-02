@@ -1,20 +1,20 @@
 const cardsRouter = require("express").Router();
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
+const filepath = path.join(__dirname, '../data/cards.json');
 
-const cards = (cb) => {
-  const filepath = path.join(__dirname, '../data/cards.json');
-  fs.readFile(filepath, { encoding: 'utf8' }, (err, data) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    cb(JSON.parse(data))
-  })
+const cards = (cbOk, cbErr) => {
+  fs.readFile(filepath, { encoding: 'utf8' })
+    .then((data) => {
+      cbOk(JSON.parse(data))
+    })
+    .catch((err) => {
+      cbErr(err.message)
+    })
 };
 
 cardsRouter.get('/cards', (req, res) => {
-  cards(data => res.send(data));
+  cards((data) => {res.send(data)}, (err) => {res.status(500).send(err)});
 });
 
 module.exports = cardsRouter;
