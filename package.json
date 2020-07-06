@@ -1,8 +1,8 @@
 {
-  "name": "pr12",
+  "name": "project",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js"

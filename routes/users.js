@@ -22,7 +22,6 @@ userId.get('/users/:id', (req, res) => {
   users((data) => {
     let found = false;
     data.forEach((el) => {
-      // eslint-disable-next-line no-underscore-dangle
       if (el._id === req.params.id) {
         res.send(el);
         found = true;
