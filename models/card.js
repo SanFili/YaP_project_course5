@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const regex = require('../regExp/urlValidation');
+const validator = require('validator');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     validate: {
-      validator: (str) => regex.test(str),
+      validator: value => validator.isURL(value, { protocols: ['http','https','ftp'], require_tld: true, require_protocol: true }),
     },
     required: true,
   },
