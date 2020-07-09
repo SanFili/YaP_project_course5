@@ -1,7 +1,7 @@
 {
-  "name": "project",
+  "name": "mesto",
   "version": "0.0.1",
-  "description": "",
+  "description": "project for yandex practicum",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
