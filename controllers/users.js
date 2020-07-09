@@ -9,11 +9,8 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      if (user !== null) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send({ message: 'Нет пользователя с таким id' });
-      }
+        orFail(res.status(404).send({ message: 'Нет пользователя с таким id' }));
+      res.status(200).send({ data: user });
     })
     .catch((err) => res.status(500).send({ message: err.message }));
 };
