@@ -10,8 +10,8 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.id).orFail()
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if(err.name == 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Нет пользователя с таким id' })
+      if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'Нет пользователя с таким id' });
       } else {
         res.status(500).send({ message: err.message });
       }
