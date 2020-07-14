@@ -1,8 +1,8 @@
 {
-  "name": "pr12",
+  "name": "mesto",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "project for yandex practicum",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js"
@@ -16,6 +16,9 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.22",
+    "validator": "^13.1.1"
   }
 }
