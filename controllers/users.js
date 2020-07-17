@@ -21,20 +21,20 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
+  // eslint-disable-next-line object-curly-newline
   const { email, password, name, about, avatar } = req.body;
   bcrypt.hash(password, 10)
-    .then((hash) =>
-    User.create({ email, password : hash, name, about, avatar })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }))
-    )
+  // eslint-disable-next-line object-curly-newline
+    .then((hash) => User.create({ email, password: hash, name, about, avatar })
+      .then((user) => res.status(200).send({ data: user }))
+      .catch((err) => res.status(500).send({ message: err.message })));
 };
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({_id: user._id}, 'some-key', {expressIn: '7d'})
+      const token = jwt.sign({ _id: user._id }, 'some-key', { expressIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
@@ -44,4 +44,4 @@ module.exports.login = (req, res) => {
     .catch((err) => {
       res.status(401).send({ message: err.message });
     });
-}
+};
