@@ -19,13 +19,13 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json());
 
+app.post('/signin', login);
+app.post('/signup', createUser);
+
 app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
-
-app.post('/signin', login);
-app.post('/signup', createUser);
 
 app.listen(PORT);
