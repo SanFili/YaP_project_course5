@@ -27,7 +27,15 @@ module.exports.createUser = (req, res) => {
   // eslint-disable-next-line object-curly-newline
     .then((hash) => User.create({ email, password: hash, name, about, avatar })
       .then((user) => res.status(200).send({ data: user }))
-      .catch((err) => res.status(500).send({ message: err.message })));
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          res.status(400).send({ message: 'Переданы невалидные данные' });
+        } else {
+          res.status(400).send({ message: 'Такой пользователь уже зарегистрирован' });
+        }
+      })
+    )
+    .catch((err) => res.status(500).send({ message: err.message }))
 };
 
 module.exports.login = (req, res) => {
