@@ -26,7 +26,7 @@ module.exports.createUser = (req, res) => {
   bcrypt.hash(password, 10)
   // eslint-disable-next-line object-curly-newline
     .then((hash) => User.create({ email, password: hash, name, about, avatar })
-      .then((user) => res.status(200).send({ data: user }))
+      .then(() => res.status(200).send({ message: 'Вы успешно зарегестрированы!'}))
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send({ message: 'Переданы невалидные данные' });
