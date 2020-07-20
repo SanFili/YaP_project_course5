@@ -41,7 +41,7 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан невалидный id'})
+        res.status(400).send({ message: 'Передан невалидный id' });
       } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({ message: 'Карточка не найдена' });
       } else {
