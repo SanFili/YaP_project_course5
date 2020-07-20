@@ -23,15 +23,15 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findById(req.params.id)
-    .orFail(() => res.status(404).send({ message: 'Карточка не найдена' }))
+    .orFail()
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.id)
           .then((foundCard) => {
             if (foundCard !== null) {
-              res.send({ data: foundCard });
+              res.status(200).send({ data: foundCard });
             } else {
-              res.status(400).send({ message: 'Карточка не найдена' });
+              res.status(404).send({ message: 'Карточка не найдена' });
             }
           })
           .catch((err) => res.status(500).send({ message: err.message }));
@@ -42,6 +42,8 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Передан невалидный id'})
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(404).send({ message: 'Карточка не найдена' });
       } else {
         res.status(500).send({ message: err.name });
       }
