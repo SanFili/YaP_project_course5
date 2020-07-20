@@ -18,7 +18,7 @@ module.exports.createCard = (req, res) => {
       } else {
         res.status(500).send({ message: err.message });
       }
-    })
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -27,15 +27,23 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.id)
-          .then((card) => {
-            if (card !== null) {
-              res.send({ data: card });
+          .then((foundCard) => {
+            if (foundCard !== null) {
+              res.send({ data: foundCard });
+            } else {
+              res.status(400).send({ message: 'Карточка не найдена' });
             }
           })
-          .catch((err) => res.status(500).send({ message: err.message }))
+          .catch((err) => res.status(500).send({ message: err.message }));
       } else {
-        res.status(400).send({ message: 'К сожалению, Вы не можете удалить данную карточку'});
+        res.status(403).send({ message: 'К сожалению, Вы не можете удалить данную карточку' });
       }
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Передан невалидный id'})
+      } else {
+        res.status(500).send({ message: err.name });
+      }
+    });
 };

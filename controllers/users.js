@@ -26,23 +26,22 @@ module.exports.createUser = (req, res) => {
   bcrypt.hash(password, 10)
   // eslint-disable-next-line object-curly-newline
     .then((hash) => User.create({ email, password: hash, name, about, avatar })
-      .then(() => res.status(200).send({ message: 'Вы успешно зарегестрированы!'}))
+      .then(() => res.status(200).send({ message: 'Вы успешно зарегестрированы!' }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send({ message: 'Переданы невалидные данные' });
         } else {
           res.status(400).send({ message: 'Такой пользователь уже зарегистрирован' });
         }
-      })
-    )
-    .catch((err) => res.status(500).send({ message: err.message }))
+      }))
+    .catch((err) => res.status(500).send({ message: err.message }));
 };
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-key', { expresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'some-key', { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
