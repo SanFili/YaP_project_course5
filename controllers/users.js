@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../errors/not-found-err');
+const BadRequestError = require('../errors/bad-request-err');
+const ForbiddenError = require('../errors/forbidden-err');
+const AuthError = require('../errors/auth-err');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -8,21 +12,21 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.id).orFail()
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Нет пользователя с таким id' });
+        next(new NotFoundError('Нет пользователя с таким id'));
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан невалидный id' });
+        next(new BadRequestError('Передан невалидный id'));
       } else {
         res.status(500).send({ message: err.message });
       }
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   // eslint-disable-next-line object-curly-newline
   const { email, password, name, about, avatar } = req.body;
   bcrypt.hash(password, 10)
@@ -31,15 +35,15 @@ module.exports.createUser = (req, res) => {
       .then(() => res.status(200).send({ message: 'Вы успешно зарегестрированы!' }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          res.status(400).send({ message: 'Переданы невалидные данные' });
+          next(new BadRequestError('Переданы невалидные данные'));
         } else {
-          res.status(400).send({ message: 'Такой пользователь уже зарегистрирован' });
+          next(new BadRequestError('Такой пользователь уже зарегистрирован'));
         }
       }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -51,6 +55,6 @@ module.exports.login = (req, res) => {
       res.status(200).send({ message: 'Аутентификация прошла успешно' });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      next(new AuthError(err.message));
     });
 };
