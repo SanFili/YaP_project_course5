@@ -3,10 +3,10 @@ const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => next(err));
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -19,7 +19,7 @@ module.exports.createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы невалидные данные'));
       } else {
-        res.status(500).send({ message: err.message });
+        next(err);
       }
     });
 };
@@ -37,7 +37,7 @@ module.exports.deleteCard = (req, res, next) => {
               next(new NotFoundError('Карточка не найдена'));
             }
           })
-          .catch((err) => res.status(500).send({ message: err.message }));
+          .catch((err) => next(err));
       } else {
         next(new ForbiddenError('К сожалению, Вы не можете удалить данную карточку'));
       }
@@ -48,7 +48,7 @@ module.exports.deleteCard = (req, res, next) => {
       } else if (err.name === 'DocumentNotFoundError') {
         next(new NotFoundError('Карточка не найдена'));
       } else {
-        res.status(500).send({ message: err.name });
+        next(err);
       }
     });
 };

@@ -5,10 +5,10 @@ const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const AuthError = require('../errors/auth-err');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => next(err));
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -20,7 +20,7 @@ module.exports.getUserById = (req, res, next) => {
       } else if (err.name === 'CastError') {
         next(new BadRequestError('Передан невалидный id'));
       } else {
-        res.status(500).send({ message: err.message });
+        next(err);
       }
     });
 };
@@ -39,7 +39,7 @@ module.exports.createUser = (req, res, next) => {
           next(new BadRequestError('Такой пользователь уже зарегистрирован'));
         }
       }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => next(err));
 };
 
 module.exports.login = (req, res, next) => {
