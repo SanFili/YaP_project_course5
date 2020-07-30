@@ -2,8 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const NotFoundError = require('./errors/not-found-err');
 const { celebrate, Joi, errors } = require('celebrate');
+
+const NotFoundError = require('./errors/not-found-err');
 const urlValid = require('./regexp/urlValidation');
 
 const { PORT = 3000 } = process.env;
@@ -28,7 +29,7 @@ app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
-      throw new Error('Сервер сейчас упадёт');
+    throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
 
@@ -37,9 +38,9 @@ app.post('/signin',
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
-    })
+    }),
   }),
- login);
+  login);
 
 app.post('/signup',
   celebrate({
@@ -49,7 +50,7 @@ app.post('/signup',
       name: Joi.string().required().min(2).max(30),
       about: Joi.string().min(2).required().max(30),
       avatar: Joi.string().required().regex(urlValid),
-    })
+    }),
   }),
   createUser);
 
@@ -63,7 +64,7 @@ app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.status(err.statusCode).send({ message: err.message });
 });
 

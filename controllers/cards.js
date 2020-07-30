@@ -39,7 +39,7 @@ module.exports.deleteCard = (req, res, next) => {
           })
           .catch((err) => res.status(500).send({ message: err.message }));
       } else {
-        next(new ForbiddenError('К сожалению, Вы не можете удалить данную карточку'))
+        next(new ForbiddenError('К сожалению, Вы не можете удалить данную карточку'));
       }
     })
     .catch((err) => {
