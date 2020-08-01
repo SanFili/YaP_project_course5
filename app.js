@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 app.use(requestLogger);
 
-app.get('/crash-test', () => {
+app.get('/crash-test', (req, res) => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
