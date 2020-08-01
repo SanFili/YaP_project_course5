@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 
 app.use(requestLogger);
 
+// eslint-disable-next-line no-unused-vars
 app.get('/crash-test', (req, res) => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
@@ -64,6 +65,7 @@ app.use(errorLogger);
 
 app.use(errors());
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
