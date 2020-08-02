@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const AuthError = require('../errors/auth-err');
+const ConflictError = require('../errors/conflict-err');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -37,7 +38,7 @@ module.exports.createUser = (req, res, next) => {
         if (err.name === 'ValidationError') {
           next(new BadRequestError('Переданы невалидные данные'));
         } else {
-          next(new BadRequestError('Такой пользователь уже зарегистрирован'));
+          next(new ConflictError('Такой пользователь уже зарегистрирован'));
         }
       }))
     .catch((err) => next(err));
