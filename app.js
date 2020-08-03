@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(requestLogger);
 
 // eslint-disable-next-line no-unused-vars
-app.get('/crash-test', (req, res) => {
+app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
