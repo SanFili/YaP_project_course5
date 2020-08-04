@@ -1,12 +1,15 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/not-found-err');
+const BadRequestError = require('../errors/bad-request-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => next(err));
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
@@ -14,14 +17,14 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы невалидные данные' });
+        next(new BadRequestError('Переданы невалидные данные'));
       } else {
-        res.status(500).send({ message: err.message });
+        next(err);
       }
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
     .orFail()
     .then((card) => {
@@ -31,21 +34,21 @@ module.exports.deleteCard = (req, res) => {
             if (foundCard !== null) {
               res.status(200).send({ data: foundCard });
             } else {
-              res.status(404).send({ message: 'Карточка не найдена' });
+              next(new NotFoundError('Карточка не найдена'));
             }
           })
-          .catch((err) => res.status(500).send({ message: err.message }));
+          .catch((err) => next(err));
       } else {
-        res.status(403).send({ message: 'К сожалению, Вы не можете удалить данную карточку' });
+        next(new ForbiddenError('К сожалению, Вы не можете удалить данную карточку'));
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан невалидный id' });
+        next(new BadRequestError('Передан невалидный id'));
       } else if (err.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        next(new NotFoundError('Карточка не найдена'));
       } else {
-        res.status(500).send({ message: err.name });
+        next(err);
       }
     });
 };
