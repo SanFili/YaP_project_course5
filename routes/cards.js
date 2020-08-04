@@ -9,7 +9,7 @@ cardsRouter.post('/',
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
       link: Joi.string().required().regex(urlValid),
-    })
+    }),
   }),
   createCard);
 cardsRouter.delete('/:id',
